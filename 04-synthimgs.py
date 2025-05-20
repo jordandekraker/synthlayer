@@ -4,46 +4,13 @@
 
 import sys
 import os
-sys.path.append('/host/cassio/export03/data/opt/hippunfold-dev/model-synthseg_v0.3/SynthSeg')
+sys.path.append('./SynthSeg')
 from SynthSeg.brain_generator import BrainGenerator
 from ext.lab2im import utils
 import numpy as np
 
 # new labeling scheme that keeps only bg, csf, gm, wm, blood
 # note labels 1-4 are gm layers, 5-6 are dg layers
-remap_FS = {0:0,
-    2:13, #wm
-    4:0, #ventricle
-    5:0, #ventricle
-    7:13, #cerebellar wm
-    8:14, #cerebellar gm
-    10:14, #thalamus
-    11:14, #caudate
-    12:14, #putamen
-    13:14, #pallidum
-    16:14, #brain stem
-    17:13, #hippocampus. we will treat this as a unique label to replicate the alveus
-    18:14, #amygdala
-    24:0, #ventricle
-    28:14, #ventralDC
-    31:17, # choroid plexus
-    77:13, # wm hypointensity
-    41:13, #wm
-    43:0, #ventricle
-    44:0, #ventricle
-    46:13, #cerebellar wm
-    47:14, #cerebellar gm
-    49:14, #thalamus
-    50:14, #caudate
-    51:14, #putamen
-    52:14, #pallidum
-    53:13, #hippocampus. we will treat this as a unique label to replicate the alveus
-    54:14, #amygdala
-    60:14, #ventralDC
-    63:17, # choroid plexus
-    77:13, # wm hypointensity
-    1000:15, # neocortex
-    101:16} #blood
 remap_HU = {#1-4 gm layers
     #5-6 dg layers
     2:7, #SRLM
@@ -51,7 +18,41 @@ remap_HU = {#1-4 gm layers
     5:9, #HATA
     6:10, #ind.gris
     9:11, #dgsrc
-    10:12} #dgsink
+    10:12, #dgsink
+    11:13} #alveus
+remap_FS = {0:0,
+    2:18, #wm
+    4:0, #ventricle
+    5:0, #ventricle
+    7:18, #cerebellar wm
+    8:14, #cerebellar gm
+    10:14, #thalamus
+    11:14, #caudate
+    12:14, #putamen
+    13:14, #pallidum
+    16:14, #brain stem
+    17:0, #hippocampus. we will treat this as csf to fill in missing ventricle areas
+    18:14, #amygdala
+    24:0, #ventricle
+    28:14, #centralDC
+    31:17, # choroid plexus
+    77:18, # wm hypointensity
+    41:18, #wm
+    43:0, #ventricle
+    44:0, #ventricle
+    46:18, #cerebellar wm
+    47:14, #cerebellar gm
+    49:14, #thalamus
+    50:14, #caudate
+    51:14, #putamen
+    52:14, #pallidum
+    53:0, #hippocampus. we will treat this as csf to fill in missing ventricle areas
+    54:14, #amygdala
+    60:14, #centralDC
+    63:17, # choroid plexus
+    77:18, # wm hypointensity
+    1000:15, # neocortex
+    101:16} #blood
 
 
 path_label_map = 'labelmaps'
